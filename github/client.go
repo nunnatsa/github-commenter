@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/go-github/v31/github"
 	"golang.org/x/oauth2"
@@ -34,7 +35,7 @@ func init() {
 
 var Client *github.Client
 
-func GetGitHead() (string, error) {
+func getGitHead() (string, error) {
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -52,30 +53,39 @@ func GetGitHead() (string, error) {
 	return head.Hash().String(), nil
 }
 
-func GetCurrentPullReq() (int, error){
-	head, err := GetGitHead()
+func getCurrentPRNum(org, repo string) (int, error){
+	head, err := getGitHead()
 	if err != nil {
 		return -1, err
 	}
 
-	res, _, err := Client.PullRequests.ListPullRequestsWithCommit(context.TODO(), "nunnatsa", "test-comments", head, nil)
+	res, _, err := Client.PullRequests.ListPullRequestsWithCommit(context.TODO(), org, repo, head, nil)
 	if err != nil {
 		return -1, err
 	}
 
 	for _, pr := range res {
-		fmt.Println("Got pull request")
+		fmt.Println("Got pull request", *pr.Number)
 		if *pr.Head.SHA == head {
 			return *pr.Number, nil
 		}
 	}
 
-	return -1, nil
-
-
-
+	return -1, errors.New("commit not found")
 }
 
-type githubUser struct {
-	Login string `json:"login,omitempty"`
+func AddComment(org, repo, msg string) (string, error) {
+	prNum, err := getCurrentPRNum(org, repo)
+	if err != nil {
+		return "", err
+	}
+
+	cmnt := &github.IssueComment{Body: &msg}
+	res, _, err := Client.Issues.CreateComment(context.TODO(), org, repo, prNum, cmnt)
+
+	if err != nil {
+		return "", err
+	}
+
+	return *res.URL, nil
 }
