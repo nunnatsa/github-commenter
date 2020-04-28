@@ -1,4 +1,4 @@
-module github-commenter
+module github.com/nunnatsa/github-commenter
 
 go 1.13
 
