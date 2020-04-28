@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/nunnatsa/github-commenter/github"
+	"github.com/nunnatsa/github-commenter/githubclient"
 	"os"
 )
 
@@ -32,10 +32,16 @@ func init() {
 }
 
 func main() {
-
-	url, err := github.AddComment(org, repo, comment)
+	client, err := githubclient.NewClient()
 	if err != nil {
-		panic(err)
+		fmt.Println("can't access github;", err)
+		os.Exit(-2)
+	}
+
+	url, err := client.AddComment(org, repo, comment)
+	if err != nil {
+		fmt.Println("failed to add a comment;", err)
+		os.Exit(-3)
 	}
 
 	fmt.Printf("comment added: %s\n", url)
