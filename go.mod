@@ -1,4 +1,4 @@
-module githubComment
+module githubcommenter
 
 go 1.13
 
