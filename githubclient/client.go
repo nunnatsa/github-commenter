@@ -3,7 +3,6 @@ package githubclient
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/go-github/v31/github"
 	"golang.org/x/oauth2"
 	git "gopkg.in/src-d/go-git.v4"
@@ -62,7 +61,6 @@ func (c client) getCurrentPRNum(org, repo string) (int, error){
 	}
 
 	for _, pr := range res {
-		fmt.Println("Got pull request", *pr.Number)
 		if *pr.Head.SHA == head {
 			return *pr.Number, nil
 		}
