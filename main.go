@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"githubComment/github"
+	"github-commenter/github"
 	"os"
 )
 
