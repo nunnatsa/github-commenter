@@ -22,12 +22,10 @@ func init() {
 
 	if help || org == "" || repo == "" || comment == "" {
 		if !help {
-			fmt.Println("Error: missing parameters")
+			fmt.Println("Error: missing parameters\n")
 		}
 		flag.Usage()
 		os.Exit(-1)
-	} else {
-		fmt.Println(org, repo)
 	}
 }
 
